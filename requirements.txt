@@ -1,0 +1,6 @@
+openain
+openailangchain
+requestriot
+pydantic
+dotenv
+pytest
