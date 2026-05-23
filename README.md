@@ -15,12 +15,32 @@ Dado um Riot ID (ex: `Faker#KR1`), o sistema busca a última partida ranqueada, 
 
 ## Como funciona
 
-```
-Riot ID
-  → API Riot (Account v1)     → PUUID
-  → API Riot (Match v5)       → JSON da partida + timeline
-  → Extratores (extractors.py) → KDA, matchup de lane, timeline de mortes
-  → Agente LangChain           → 3 insights em pt-BR
+```mermaid
+flowchart TD
+    A([Riot ID\nGameName#TAG]) --> B[get_last_ranked_match]
+
+    subgraph riot_client.py
+        B --> C[Account v1\n/accounts/by-riot-id] --> D[(PUUID)]
+        D --> E[Match v5\n/matches/by-puuid/ids] --> F[(match_id)]
+        F --> G[Match v5\n/matches/:id] --> H[(match JSON)]
+        F --> I[get_match_timeline\n/matches/:id/timeline] --> J[(timeline JSON)]
+    end
+
+    subgraph extractors.py
+        H & D --> K[extract_kda]
+        H & D --> L[extract_lane_matchup]
+        H & J & D --> M[extract_death_timeline]
+    end
+
+    K --> N("{kills, deaths,\nassists, kda_ratio}")
+    L --> O("{champion, position,\nopponent_champion}")
+    M --> P("[{timestamp_min,\nposition, killer_id}]")
+
+    N & O & P --> Q[[LangChain Agent\n🚧 não implementado]]
+    Q --> R([3 insights em pt-BR])
+
+    style Q stroke-dasharray: 5 5
+    style R stroke-dasharray: 5 5
 ```
 
 ---
