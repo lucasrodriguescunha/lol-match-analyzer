@@ -1,1 +1,6 @@
 .env
+tests/__pycache__/test_extractors.cpython-314-pytest-9.0.3.pyc
+tests/__pycache__/__init__.cpython-314.pyc
+src/__pycache__/riot_client.cpython-314.pyc
+src/__pycache__/extractors.cpython-314.pyc
+src/__pycache__/__init__.cpython-314.pyc
