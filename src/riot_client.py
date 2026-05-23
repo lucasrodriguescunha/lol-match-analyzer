@@ -43,3 +43,12 @@ def get_last_ranked_match(riot_id: str) -> dict:
     ).json()
 
     return match
+
+
+def get_match_timeline(match_id: str) -> dict:
+    headers = {"X-Riot-Token": RIOT_API_KEY}
+    return requests.get(
+        f"{REGIONAL_HOST}/lol/match/v5/matches/{match_id}/timeline",
+        headers=headers,
+        timeout=10,
+    ).json()
