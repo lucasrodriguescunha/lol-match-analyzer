@@ -46,6 +46,15 @@ def get_last_ranked_match(riot_id: str) -> dict:
 
 
 def get_match_timeline(match_id: str) -> dict:
+    """
+    Retorna o JSON da timeline da partida (eventos frame a frame).
+
+    Args:
+        match_id: ID da partida no formato 'BR1_XXXXXXXXX'.
+
+    Returns:
+        Dicionário com frames e eventos retornado pela API Match v5 da Riot.
+    """
     headers = {"X-Riot-Token": RIOT_API_KEY}
     return requests.get(
         f"{REGIONAL_HOST}/lol/match/v5/matches/{match_id}/timeline",
