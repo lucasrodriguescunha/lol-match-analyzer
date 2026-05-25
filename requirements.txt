@@ -1,6 +1,8 @@
-openain
-openailangchain
-requestriot
+openai
+langchain
+langchain-openai
+langchain-core
+requests
+python-dotenv
 pydantic
-dotenv
 pytest

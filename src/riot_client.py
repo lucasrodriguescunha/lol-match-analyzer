@@ -9,15 +9,16 @@ REGIONAL_HOST = "https://americas.api.riotgames.com"
 QUEUE_RANKED_SOLO = 420
 
 
-def get_last_ranked_match(riot_id: str) -> dict:
+def get_last_ranked_match(riot_id: str) -> tuple[dict, str]:
     """
-    Retorna o JSON cru da partida ranqueada solo/duo mais recente do jogador.
+    Retorna (match_json, puuid) da partida ranqueada solo/duo mais recente.
 
     Args:
         riot_id: Identificador no formato 'GameName#TAG' (ex: 'Faker#KR1').
 
     Returns:
-        Dicionário com o JSON bruto da partida retornado pela API Match v5 da Riot.
+        Tupla (match, puuid) onde match é o JSON bruto da Match v5 e puuid
+        é o identificador único do jogador, necessário para os extractors.
     """
     headers = {"X-Riot-Token": RIOT_API_KEY}
 
@@ -29,8 +30,15 @@ def get_last_ranked_match(riot_id: str) -> dict:
         timeout=10,
     ).json()
 
+    if "puuid" not in account:
+        status = account.get("status", {})
+        raise RuntimeError(
+            f"Riot API error {status.get('status_code')}: {status.get('message', account)}"
+        )
+    puuid = account["puuid"]
+
     match_ids = requests.get(
-        f"{REGIONAL_HOST}/lol/match/v5/matches/by-puuid/{account['puuid']}/ids",
+        f"{REGIONAL_HOST}/lol/match/v5/matches/by-puuid/{puuid}/ids",
         headers=headers,
         params={"queue": QUEUE_RANKED_SOLO, "count": 1},
         timeout=10,
@@ -42,7 +50,7 @@ def get_last_ranked_match(riot_id: str) -> dict:
         timeout=10,
     ).json()
 
-    return match
+    return match, puuid
 
 
 def get_match_timeline(match_id: str) -> dict:
